@@ -1,11 +1,10 @@
-from __future__ import print_function
 from setuptools import setup
-from setuptools.command.test import test as TestCommand
+from setuptools.command.test import test
 import sys
 
-class CirclesTest(TestCommand):
+class CirclesTest(test):
     def finalize_options(self):
-        TestCommand.finalize_options(self)
+        test.finalize_options(self)
         self.test_args = []
         self.test_suite = True
     def run_tests(self):
@@ -23,11 +22,6 @@ setup(
     license = 'Apache Software License',
     author = 'Yegor Bugayenko',
     tests_require = ['pytest', 'tox'],
-    install_requires = [
-        'Flask>=0.10.1',
-        'Flask-SQLAlchemy>=1.0',
-        'SQLAlchemy==0.8.2',
-    ],
     cmdclass = {'test': CirclesTest},
     author_email = 'yegor@tpc2.com',
     description = 'Twitter Circles',
