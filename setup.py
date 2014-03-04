@@ -35,7 +35,7 @@ setup(
     packages = ['circles'],
     include_package_data = True,
     platforms = 'any',
-    test_suite = 'circles.test.test_circles',
+    test_suite = 'circles.test.test_Circle',
     classifiers = [
         'Programming Language :: Python',
         'Development Status :: 0 - Beta',
