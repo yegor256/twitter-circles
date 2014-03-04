@@ -35,9 +35,10 @@ __version__ = "0.1.0"
 __maintainer__ = "Yegor Bugayenko"
 __email__ = "yegor@tpc2.com"
 
-from circles.circle import Circle
+class Circle:
+    """hey"""
+    def __init__(self):
+        print("eyiii")
 
-def test_SimpleInstantiation():
-    circle = Circle()
-    circle.test()
-    assert 4 == 4
+    def test(self):
+        print("Hey")
