@@ -29,11 +29,9 @@
  */
 package com.curiost.twitter.circles;
 
-import com.jolbox.bonecp.BoneCPDataSource;
-import javax.sql.DataSource;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assume;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
@@ -45,13 +43,19 @@ import org.junit.Test;
 public final class SqlRanksITCase {
 
     /**
+     * SQL source.
+     */
+    @Rule
+    public final transient SqlRule sql = new SqlRule();
+
+    /**
      * SqlRanks can add users and fetch top.
      * @throws Exception If some problem inside
      */
     @Test
     public void addsUsersAndFetchesTop() throws Exception {
         final Ranks ranks = new SqlRanks(
-            SqlRanksITCase.source(), 1
+            this.sql.source(), 1
         );
         ranks.add("jeff", 2);
         final String walter = "walter";
@@ -65,24 +69,6 @@ public final class SqlRanksITCase {
             ranks.top().iterator().next(),
             Matchers.is(walter)
         );
-    }
-
-    /**
-     * Make SQL source.
-     * @return Source
-     */
-    private static SqlSource source() {
-        final String url = System.getProperty("failsafe.sqlite.jdbc");
-        Assume.assumeNotNull(url);
-        return new SqlSource() {
-            @Override
-            public DataSource get() {
-                final BoneCPDataSource src = new BoneCPDataSource();
-                src.setDriverClass("org.sqlite.JDBC");
-                src.setJdbcUrl(url);
-                return src;
-            }
-        };
     }
 
 }

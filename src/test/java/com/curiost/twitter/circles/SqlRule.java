@@ -29,52 +29,68 @@
  */
 package com.curiost.twitter.circles;
 
-import java.util.Arrays;
-import java.util.Date;
-import org.apache.commons.lang3.time.DateUtils;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
-import org.junit.Rule;
-import org.junit.Test;
+import com.jolbox.bonecp.BoneCPDataSource;
+import javax.sql.DataSource;
+import org.junit.Assume;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
 
 /**
- * Integration case for {@link SqlBuffer}.
+ * Integration case for {@link SqlCircles}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 0.1
  */
-public final class SqlBufferITCase {
+final class SqlRule implements TestRule {
 
     /**
-     * SQL source.
+     * Sql source.
      */
-    @Rule
-    public final transient SqlRule sql = new SqlRule();
+    private static final SqlSource SRC = SqlRule.make();
 
     /**
-     * SqlBuffer can push tweets and pull them back.
-     * @throws Exception If some problem inside
+     * URL.
      */
-    @Test
-    public void pushesTweetsAndPulls() throws Exception {
-        final Buffer buffer = new SqlBuffer(
-            this.sql.source(), 1
-        );
-        final int age = 100;
-        buffer.push(
-            Arrays.<Tweet>asList(
-                new Tweet.Simple("jeff", DateUtils.addDays(new Date(), -age)),
-                new Tweet.Simple("peter", DateUtils.addDays(new Date(), -age))
-            )
-        );
-        MatcherAssert.assertThat(
-            buffer.pull(),
-            Matchers.<Tweet>iterableWithSize(2)
-        );
-        MatcherAssert.assertThat(
-            buffer.pull(),
-            Matchers.emptyIterable()
-        );
+    private static final String URL = SqlRule.jdbc();
+
+    @Override
+    public Statement apply(final Statement statement,
+        final Description description) {
+        return statement;
+    }
+
+    /**
+     * Get SQL source.
+     * @return Source
+     */
+    public SqlSource source() {
+        Assume.assumeNotNull(SqlRule.URL);
+        return SqlRule.SRC;
+    }
+
+    /**
+     * Make SQL source.
+     * @return Source
+     */
+    private static SqlSource make() {
+        final BoneCPDataSource src = new BoneCPDataSource();
+        src.setDriverClass("org.sqlite.JDBC");
+        src.setJdbcUrl(SqlRule.jdbc());
+        return new SqlSource() {
+            @Override
+            public DataSource get() {
+                return src;
+            }
+        };
+    }
+
+    /**
+     * Make JDBC URL.
+     * @return Url
+     */
+    private static String jdbc() {
+        return System.getProperty("failsafe.sqlite.jdbc");
     }
 
 }

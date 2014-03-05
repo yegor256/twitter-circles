@@ -71,6 +71,10 @@ final class SqlCircles {
     public int find(final String city, final String tag) throws IOException {
         try {
             return new JdbcSession(this.source.get())
+                .sql("INSERT OR IGNORE INTO circle (city, tag) VALUES (?, ?)")
+                .set(city)
+                .set(tag)
+                .execute()
                 .sql("SELECT id FROM circle WHERE city = ? AND tag = ?")
                 .set(city)
                 .set(tag)

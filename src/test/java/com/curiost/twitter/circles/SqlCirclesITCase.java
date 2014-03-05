@@ -29,21 +29,18 @@
  */
 package com.curiost.twitter.circles;
 
-import java.util.Arrays;
-import java.util.Date;
-import org.apache.commons.lang3.time.DateUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 
 /**
- * Integration case for {@link SqlBuffer}.
+ * Integration case for {@link SqlCircles}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 0.1
  */
-public final class SqlBufferITCase {
+public final class SqlCirclesITCase {
 
     /**
      * SQL source.
@@ -57,23 +54,9 @@ public final class SqlBufferITCase {
      */
     @Test
     public void pushesTweetsAndPulls() throws Exception {
-        final Buffer buffer = new SqlBuffer(
-            this.sql.source(), 1
-        );
-        final int age = 100;
-        buffer.push(
-            Arrays.<Tweet>asList(
-                new Tweet.Simple("jeff", DateUtils.addDays(new Date(), -age)),
-                new Tweet.Simple("peter", DateUtils.addDays(new Date(), -age))
-            )
-        );
         MatcherAssert.assertThat(
-            buffer.pull(),
-            Matchers.<Tweet>iterableWithSize(2)
-        );
-        MatcherAssert.assertThat(
-            buffer.pull(),
-            Matchers.emptyIterable()
+            new SqlCircles(this.sql.source()).find("10,10,5mi", "java"),
+            Matchers.not(Matchers.is(0))
         );
     }
 
