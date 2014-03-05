@@ -1,5 +1,2 @@
-*.pyc
 .idea/
-.tox/
-build/
-*.egg-info
+*.iml
