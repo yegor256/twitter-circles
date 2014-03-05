@@ -86,7 +86,7 @@ final class SqlBuffer implements Buffer {
     public Date recent() throws IOException {
         try {
             return new JdbcSession(this.source.get())
-                .sql("SELECT date FROM buffer WHERE circle = ? ORDER BY date DESC LIMIT 1")
+                .sql("SELECT date FROM tweet WHERE circle = ? ORDER BY date DESC LIMIT 1")
                 .set(this.circle)
                 .select(
                     new JdbcSession.Handler<Date>() {
@@ -109,7 +109,7 @@ final class SqlBuffer implements Buffer {
         final Collection<Tweet> tweets;
         try {
             tweets = new JdbcSession(this.source.get())
-                .sql("SELECT user, date FROM buffer WHERE circle = ? AND date < ?")
+                .sql("SELECT user, date FROM tweet WHERE circle = ? AND date < ?")
                 .set(this.circle)
                 .set(new Utc(threshold))
                 .select(
@@ -122,7 +122,9 @@ final class SqlBuffer implements Buffer {
                     }
                 );
             new JdbcSession(this.source.get())
-                .sql("DELETE FROM buffer WHERE city = ? AND tag = ? AND date < ?")
+                .sql("DELETE FROM tweet WHERE circle = ? AND date < ?")
+                .set(this.circle)
+                .set(new Utc(threshold))
                 .execute();
         } catch (SQLException ex) {
             throw new IOException(ex);
@@ -137,7 +139,7 @@ final class SqlBuffer implements Buffer {
      */
     private void push(final Tweet tweet) throws SQLException {
         new JdbcSession(this.source.get())
-            .sql("INSERT INTO buffer (circle, user, date) VALUES (?, ?, ?)")
+            .sql("INSERT INTO tweet (circle, user, date) VALUES (?, ?, ?)")
             .set(this.circle)
             .set(tweet.user())
             .set(new Utc(tweet.date()))
@@ -156,7 +158,7 @@ final class SqlBuffer implements Buffer {
         while (rset.next()) {
             tweets.add(
                 new Tweet.Simple(
-                    rset.getString(0),
+                    rset.getString(1),
                     Utc.getTimestamp(rset, 1)
                 )
             );
