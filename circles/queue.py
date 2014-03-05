@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Copyright (c) 2009-2014, Curiost.com
 All rights reserved.
@@ -35,9 +36,29 @@ __version__ = "0.1.0"
 __maintainer__ = "Yegor Bugayenko"
 __email__ = "yegor@tpc2.com"
 
-from circles.circle import Circle
+import sqlalchemy
 
-def test_SimpleInstantiation():
-    circle = Circle()
-    circle.test()
-    assert 4 == 4
+class Queue(object):
+    """
+    Queue of tweets.
+    """
+
+    def __init__(self, engine, city, tag):
+        self.engine = engine
+        self.city = city
+        self.tag = tag
+
+    def push(self, tweets):
+        """none
+        :param tweets: List of tweets
+        """
+        users = Table('users', metadata,
+...     Column('id', Integer, primary_key=True),
+...     Column('name', String),
+...     Column('fullname', String),
+... )
+        return 0;
+
+    def pull(self):
+        """none""
+        return 0

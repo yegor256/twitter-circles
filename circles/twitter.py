@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Copyright (c) 2009-2014, Curiost.com
 All rights reserved.
@@ -35,10 +36,32 @@ __version__ = "0.1.0"
 __maintainer__ = "Yegor Bugayenko"
 __email__ = "yegor@tpc2.com"
 
-class Circle:
-    """hey"""
-    def __init__(self):
-        print("eyiii")
 
-    def test(self):
-        print("Hey")
+class Twitter(object):
+    """
+    Queue of tweets.
+    """
+
+    def __init__(self):
+        """empty for now"""
+
+    def tweets(self, city, tag, since):
+        """
+        Get tweets.
+        :return: Tweets
+        """
+        return Circle(city, tag)
+
+
+class Tweet(object):
+    """test"""
+
+    def __init__(self, city, tag):
+        """empty for now"""
+        self.city = city
+        self.tag = tag
+
+    def tweets(self):
+        return Tweets(self.city, self.tag, self.since())
+
+
