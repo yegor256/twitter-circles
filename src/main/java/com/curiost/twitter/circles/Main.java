@@ -29,6 +29,15 @@
  */
 package com.curiost.twitter.circles;
 
+import com.google.common.collect.Iterables;
+import com.jcabi.aspects.Tv;
+import com.jcabi.log.Logger;
+import com.jolbox.bonecp.BoneCPDataSource;
+import java.util.logging.Level;
+import javax.sql.DataSource;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+
 /**
  * Entry point.
  *
@@ -38,8 +47,58 @@ package com.curiost.twitter.circles;
  */
 public final class Main {
 
+    /**
+     * Entry point.
+     * @param args Command line args
+     * @throws Exception If fails
+     */
     public static void main(final String... args) throws Exception {
+        final OptionParser parser = Main.parser();
+        final OptionSet opts = parser.parse(args);
+        if (opts.has("help")) {
+            parser.printHelpOn(Logger.stream(Level.INFO, Main.class));
+        } else {
+            final String city = opts.valueOf("city").toString();
+            final String tag = opts.valueOf("tag").toString();
+            final SqlSource sql = new SqlSource() {
+                @Override
+                public DataSource get() {
+                    final BoneCPDataSource src = new BoneCPDataSource();
+                    src.setDriverClass("org.sqlite.JDBC");
+                    src.setJdbcUrl(opts.valueOf("jdbc").toString());
+                    return src;
+                }
+            };
+            final int circle = new SqlCircles(sql).find(city, tag);
+            final Buffer buffer = new SqlBuffer(sql, circle);
+            final Iterable<String> users = Iterables.limit(
+                new Search(
+                    new SimpleTweets(city, tag, buffer.recent()),
+                    buffer,
+                    new SqlRanks(sql, circle)
+                ).users(),
+                Tv.HUNDRED
+            );
+            for (final String user : users) {
+                Logger.info(Main.class, "twitter user: %s", user);
+            }
+        }
+    }
 
+    /**
+     * Build a parser.
+     * @return Parser
+     */
+    private static OptionParser parser() {
+        final OptionParser parser = new OptionParser();
+        parser.accepts("help", "Show detailed instructions").forHelp();
+        parser.accepts("city", "Twitter geolocation, e.g. '13.4,-15.5,3mi'")
+            .withRequiredArg().ofType(String.class);;
+        parser.accepts("tag", "Twitter hash tag")
+            .withRequiredArg().ofType(String.class);
+        parser.accepts("jdbc", "JDBC URL in 'jdbc:sqlite:/file/name' format")
+            .withRequiredArg().ofType(String.class);
+        return parser;
     }
 
 }
