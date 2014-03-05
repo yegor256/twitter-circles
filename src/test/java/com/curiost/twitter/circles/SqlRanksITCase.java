@@ -29,30 +29,60 @@
  */
 package com.curiost.twitter.circles;
 
-import com.jcabi.aspects.Immutable;
-import java.io.IOException;
+import com.jolbox.bonecp.BoneCPDataSource;
+import javax.sql.DataSource;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Assume;
+import org.junit.Test;
 
 /**
- * Ranks of users.
- *
+ * Integration case for {@link SqlRanks}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 0.1
  */
-@Immutable
-interface Ranks {
+public final class SqlRanksITCase {
 
     /**
-     * Add value to the user.
-     * @param user User name
-     * @param value Value to add (or deduct)
+     * SqlRanks can add users and fetch top.
+     * @throws Exception If some problem inside
      */
-    void add(String user, int value) throws IOException;
+    @Test
+    public void addsUsersAndFetchesTop() throws Exception {
+        final Ranks ranks = new SqlRanks(
+            SqlRanksITCase.source(), 1
+        );
+        ranks.add("jeff", 2);
+        final String walter = "walter";
+        ranks.add(walter, 1);
+        ranks.add(walter, 2);
+        MatcherAssert.assertThat(
+            ranks.top(),
+            Matchers.<String>iterableWithSize(2)
+        );
+        MatcherAssert.assertThat(
+            ranks.top().iterator().next(),
+            Matchers.is(walter)
+        );
+    }
 
     /**
-     * Get most ranked users.
-     * @return User names
+     * Make SQL source.
+     * @return Source
      */
-    Iterable<String> top() throws IOException;
+    private static SqlSource source() {
+        final String url = System.getProperty("failsafe.sqlite.jdbc");
+        Assume.assumeNotNull(url);
+        return new SqlSource() {
+            @Override
+            public DataSource get() {
+                final BoneCPDataSource src = new BoneCPDataSource();
+                src.setDriverClass("org.sqlite.JDBC");
+                src.setJdbcUrl(url);
+                return src;
+            }
+        };
+    }
 
 }

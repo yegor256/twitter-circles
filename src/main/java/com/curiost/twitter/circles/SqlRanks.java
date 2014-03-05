@@ -67,9 +67,21 @@ final class SqlRanks implements Ranks {
     }
 
     @Override
-    public void add(final String user, final int value) {
-        new JdbcSession(this.source.get())
-            .sql("INSERT OR UPDATE rank ()");
+    public void add(final String user, final int value) throws IOException {
+        try {
+            new JdbcSession(this.source.get())
+                .sql("INSERT OR IGNORE INTO rank (circle, user, value) VALUES (?, ?, 0)")
+                .set(this.circle)
+                .set(user)
+                .execute()
+                .sql("UPDATE rank SET value = value + ? WHERE circle = ? AND user = ?")
+                .set(value)
+                .set(this.circle)
+                .set(user)
+                .execute();
+        } catch (SQLException ex) {
+            throw new IOException(ex);
+        }
     }
 
     @Override
