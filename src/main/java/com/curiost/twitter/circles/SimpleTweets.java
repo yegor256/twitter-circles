@@ -31,6 +31,7 @@ package com.curiost.twitter.circles;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import java.util.Collections;
 import java.util.Date;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -65,6 +66,6 @@ final class SimpleTweets implements Tweets {
 
     @Override
     public Iterable<Tweet> fetch() {
-        throw new UnsupportedOperationException("#fetch()");
+        return Collections.emptyList();
     }
 }

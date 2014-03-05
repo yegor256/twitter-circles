@@ -81,6 +81,21 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
             <groupId>com.jcabi</groupId>
             <artifactId>jcabi-jdbc</artifactId>
         </dependency>
@@ -165,7 +180,7 @@
     </build>
     <profiles>
         <profile>
-            <id>liquibase</id>
+            <id>live</id>
             <build>
                 <plugins>
                     <plugin>
@@ -174,13 +189,36 @@
                         <executions>
                             <execution>
                                 <id>live-sql-schema</id>
-                                <phase>deploy</phase>
+                                <phase>generate-resources</phase>
                                 <goals>
                                     <goal>update</goal>
                                 </goals>
                                 <configuration>
                                     <url>jdbc:sqlite:${sqlite.file}</url>
                                     <contexts>any,live</contexts>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>run-circles</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <classpathScope>runtime</classpathScope>
+                                    <mainClass>com.curiost.twitter.circles.Main</mainClass>
+                                    <arguments>
+                                        <arg>--city=${city}</arg>
+                                        <arg>--tag=${tag}</arg>
+                                        <arg>--jdbc=jdbc:sqlite:${sqlite.file}</arg>
+                                    </arguments>
                                 </configuration>
                             </execution>
                         </executions>

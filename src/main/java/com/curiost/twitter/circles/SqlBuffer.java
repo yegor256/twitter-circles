@@ -93,8 +93,13 @@ final class SqlBuffer implements Buffer {
                         @Override
                         public Date handle(final ResultSet rset,
                             final Statement stmt) throws SQLException {
-                            rset.next();
-                            return Utc.getTimestamp(rset, 1);
+                            final Date recent;
+                            if (rset.next()) {
+                                recent = Utc.getTimestamp(rset, 1);
+                            } else {
+                                recent = DateUtils.addDays(new Date(), -1);
+                            }
+                            return recent;
                         }
                     }
                 );

@@ -77,4 +77,25 @@ public final class SqlBufferITCase {
         );
     }
 
+    /**
+     * SqlBuffer can get recent date.
+     * @throws Exception If some problem inside
+     */
+    @Test
+    public void fetchesRecentDate() throws Exception {
+        final Buffer buffer = new SqlBuffer(
+            this.sql.source(), 1
+        );
+        buffer.push(
+            Arrays.<Tweet>asList(
+                new Tweet.Simple("bunny", new Date()),
+                new Tweet.Simple("willy", new Date())
+            )
+        );
+        MatcherAssert.assertThat(
+            buffer.recent(),
+            Matchers.notNullValue()
+        );
+    }
+
 }
