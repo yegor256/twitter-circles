@@ -49,7 +49,7 @@ def index(db):
     """
     cur = db.execute(
         """
-        SELECT c.id, city, tag, SUM(t.id) AS sum
+        SELECT c.id, city, tag, COUNT(t.id) AS sum
         FROM circle AS c
         JOIN tweet AS t ON c.id = t.circle
         GROUP BY c.id
