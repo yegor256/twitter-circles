@@ -31,10 +31,25 @@ package com.curiost.twitter.circles;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
-import java.util.Collections;
+import com.jcabi.aspects.Tv;
+import java.io.IOException;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.NoSuchElementException;
+import java.util.Queue;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import twitter4j.GeoLocation;
+import twitter4j.Query;
+import twitter4j.QueryResult;
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
+import twitter4j.conf.ConfigurationBuilder;
 
 /**
  * Simple tweets.
@@ -48,6 +63,13 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode(of = { "city", "tag", "since" })
 final class SimpleTweets implements Tweets {
+
+    /**
+     * Pattern for the city.
+     */
+    private static final Pattern PTN = Pattern.compile(
+        "(-?\\d+(?:\\.\\d+)?),(-?\\d+(?:\\.\\d+)?),(\\d+)(mi|km)"
+    );
 
     private final transient String city;
 
@@ -65,7 +87,92 @@ final class SimpleTweets implements Tweets {
     }
 
     @Override
-    public Iterable<Tweet> fetch() {
-        return Collections.emptyList();
+    public Iterable<Tweet> fetch() throws IOException {
+        return new Iterable<Tweet>() {
+            @Override
+            public Iterator<Tweet> iterator() {
+                return new SimpleTweets.Row(SimpleTweets.this.query());
+            }
+        };
     }
+
+    /**
+     * Make a query.
+     * @return Query
+     */
+    private Query query() {
+        final Matcher matcher = SimpleTweets.PTN.matcher(this.city);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException(
+                String.format("invalid city format: %s", this.city)
+            );
+        }
+        final Query query = new Query(this.tag);
+        query.setGeoCode(
+            new GeoLocation(
+                Double.parseDouble(matcher.group(1)),
+                Double.parseDouble(matcher.group(2))
+            ),
+            Double.parseDouble(matcher.group(Tv.THREE)),
+            matcher.group(Tv.FOUR)
+        );
+        return query;
+    }
+
+    /**
+     * Make twitter client.
+     * @return Twitter client
+     */
+    private Twitter twitter() {
+        return new TwitterFactory(
+            new ConfigurationBuilder()
+                .setDebugEnabled(true)
+                .setOAuthConsumerKey("zo0oeqeUWZWExIkE6e9g")
+                .setOAuthConsumerSecret("BCpOFHVQPDUxBt8xNGNxFCc4CxUhrTtyvVmvnpY2Q")
+                .setOAuthAccessToken("225097272-uO2hpD41EHYfp76fvg1x5LcRsTRSDU2LNcROJEzE")
+                .setOAuthAccessTokenSecret("QnnE41YL0d6rTYsjAnfPbbq3PaVvDzlZm6Ngvf4MtCQmr")
+                .build()
+        ).getInstance();
+    }
+
+    /**
+     * Endless row of tweets.
+     */
+    private final class Row implements Iterator<Tweet> {
+        private final transient Queue<Status> items = new LinkedList<Status>();
+        private transient Query query;
+        Row(final Query qry) {
+            this.query = qry;
+        }
+        @Override
+        public boolean hasNext() {
+            if (this.items.isEmpty() && this.query != null) {
+                final QueryResult result;
+                try {
+                    result = SimpleTweets.this.twitter().search(this.query);
+                } catch (TwitterException ex) {
+                    throw new IllegalArgumentException(ex);
+                }
+                this.query = result.nextQuery();
+                this.items.addAll(result.getTweets());
+            }
+            return !this.items.isEmpty();
+        }
+        @Override
+        public Tweet next() {
+            if (!this.hasNext()) {
+                throw new NoSuchElementException("no more tweets");
+            }
+            final Status status = this.items.poll();
+            return new Tweet.Simple(
+                status.getUser().getName(),
+                status.getCreatedAt()
+            );
+        }
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("#remove()");
+        }
+    }
+
 }

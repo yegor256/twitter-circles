@@ -29,23 +29,35 @@
  */
 package com.curiost.twitter.circles;
 
-import com.jcabi.aspects.Immutable;
-import java.io.IOException;
+import com.jcabi.aspects.Tv;
+import java.util.Date;
+import org.apache.commons.lang3.time.DateUtils;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.Test;
 
 /**
- * Tweets.
- *
+ * Integration case for {@link SimpleTweets}.
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 0.1
  */
-@Immutable
-interface Tweets {
+public final class SimpleTweetsITCase {
 
     /**
-     * Fetch them all.
-     * @return Tweets
+     * SimpleTweets can fetch tweets.
+     * @throws Exception If some problem inside
      */
-    Iterable<Tweet> fetch() throws IOException;
+    @Test
+    public void fetchesTweets() throws Exception {
+        final Tweets tweets = new SimpleTweets(
+            "52.3740300,4.8896900,30km", "java",
+            DateUtils.addDays(new Date(), -1)
+        );
+        MatcherAssert.assertThat(
+            tweets.fetch(),
+            Matchers.<Tweet>iterableWithSize(Matchers.greaterThan(Tv.TEN))
+        );
+    }
 
 }
