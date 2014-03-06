@@ -35,6 +35,7 @@ $ python front.py
 """
 
 import bottle
+import socket
 from bottle_sqlite import SQLitePlugin
 import argparse
 
@@ -83,4 +84,5 @@ def xsl(path):
     return bottle.static_file(path, root='xsl')
 
 
-bottle.run(host='localhost', port=8081)
+if __name__ == '__main__':
+    bottle.run(host=socket.gethostname(), port=8081)

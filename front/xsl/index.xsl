@@ -20,7 +20,9 @@
                 </xsl:attribute>
                 <xsl:value-of select="city"/>
                 <xsl:text> </xsl:text>
+                <xsl:text>&quot;</xsl:text>
                 <xsl:value-of select="tag"/>
+                <xsl:text>&quot;</xsl:text>
             </a>
         </p>
     </xsl:template>
