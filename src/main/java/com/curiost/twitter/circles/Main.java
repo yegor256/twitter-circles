@@ -60,15 +60,7 @@ public final class Main {
         } else {
             final String city = opts.valueOf("city").toString();
             final String tag = opts.valueOf("tag").toString();
-            final SqlSource sql = new SqlSource() {
-                @Override
-                public DataSource get() {
-                    final BoneCPDataSource src = new BoneCPDataSource();
-                    src.setDriverClass("org.sqlite.JDBC");
-                    src.setJdbcUrl(opts.valueOf("jdbc").toString());
-                    return src;
-                }
-            };
+            final SqlSource sql = Main.source(opts.valueOf("jdbc").toString());
             final int circle = new SqlCircles(sql).find(city, tag);
             final Buffer buffer = new SqlBuffer(sql, circle);
             final Iterable<String> users = Iterables.limit(
@@ -104,6 +96,25 @@ public final class Main {
         parser.accepts("key", "Twitter OAuth API key")
             .withRequiredArg().ofType(String.class);
         return parser;
+    }
+
+    /**
+     * Create SQL source.
+     * @param url URL
+     * @return Source
+     */
+    private static SqlSource source(final String url) {
+        return new SqlSource() {
+            @Override
+            public DataSource get() {
+                final BoneCPDataSource src = new BoneCPDataSource();
+                src.setDriverClass("org.sqlite.JDBC");
+                src.setJdbcUrl(url);
+                src.setUsername("none");
+                src.setPassword("");
+                return src;
+            }
+        };
     }
 
 }

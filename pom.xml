@@ -54,6 +54,11 @@
         <developerConnection>scm:git:github.com:curiost/twitter-circles.git</developerConnection>
         <url>https://github.com/curiost/twitter-circles</url>
     </scm>
+    <properties>
+        <sqlite.file>${project.build.directory}/live.db</sqlite.file>
+        <city>52.3740300,4.8896900,30km</city>
+        <tag>java</tag>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>com.jcabi</groupId>
@@ -224,6 +229,7 @@
                                         <arg>--city=${city}</arg>
                                         <arg>--tag=${tag}</arg>
                                         <arg>--jdbc=jdbc:sqlite:${sqlite.file}</arg>
+                                        <arg>--key=${failsafe.twitter.oauth}</arg>
                                     </arguments>
                                 </configuration>
                             </execution>

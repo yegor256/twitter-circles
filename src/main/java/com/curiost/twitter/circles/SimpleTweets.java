@@ -175,7 +175,7 @@ final class SimpleTweets implements Tweets {
             }
             final Status status = this.items.poll();
             return new Tweet.Simple(
-                status.getUser().getName(),
+                status.getUser().getScreenName(),
                 status.getCreatedAt()
             );
         }
