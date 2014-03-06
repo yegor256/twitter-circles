@@ -75,7 +75,7 @@ final class SqlBuffer implements Buffer {
     public long latest() throws IOException {
         try {
             return new JdbcSession(this.source.get())
-                .sql("SELECT id FROM tweet WHERE circle = ? ORDER BY date DESC LIMIT 1")
+                .sql("SELECT number FROM tweet WHERE circle = ? ORDER BY date DESC LIMIT 1")
                 .set(this.circle)
                 .select(
                     new JdbcSession.Handler<Long>() {
@@ -103,7 +103,7 @@ final class SqlBuffer implements Buffer {
         final Collection<Tweet> tweets;
         try {
             tweets = new JdbcSession(this.source.get())
-                .sql("SELECT id, user, date FROM tweet WHERE circle = ? AND date < ?")
+                .sql("SELECT number, user, date FROM tweet WHERE circle = ? AND date < ?")
                 .set(this.circle)
                 .set(new Utc(threshold))
                 .select(
@@ -130,7 +130,7 @@ final class SqlBuffer implements Buffer {
     public void push(final Tweet tweet) throws IOException {
         try {
             new JdbcSession(this.source.get())
-                .sql("INSERT INTO tweet (id, circle, user, date) VALUES (?, ?, ?, ?)")
+                .sql("INSERT INTO tweet (number, circle, user, date) VALUES (?, ?, ?, ?)")
                 .set(tweet.number())
                 .set(this.circle)
                 .set(tweet.user())
