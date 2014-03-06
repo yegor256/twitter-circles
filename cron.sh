@@ -22,6 +22,6 @@ do
     for city in "${CITIES[@]}"
     do
         java -jar target/circles.jar --city=${city} \
-            --tag=${KEYWORD} --jdbc=jdbc:sqlite:${DB} --key=${OAUTH}
+            --tag=${keyword} --jdbc=jdbc:sqlite:${DB} --key=${OAUTH}
     done
 done
