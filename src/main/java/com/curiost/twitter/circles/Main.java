@@ -73,7 +73,10 @@ public final class Main {
             final Buffer buffer = new SqlBuffer(sql, circle);
             final Iterable<String> users = Iterables.limit(
                 new Search(
-                    new SimpleTweets(city, tag, buffer.recent()),
+                    new SimpleTweets(
+                        opts.valueOf("key").toString(),
+                        city, tag, buffer.recent()
+                    ),
                     buffer,
                     new SqlRanks(sql, circle)
                 ).users(),
@@ -97,6 +100,8 @@ public final class Main {
         parser.accepts("tag", "Twitter hash tag")
             .withRequiredArg().ofType(String.class);
         parser.accepts("jdbc", "JDBC URL in 'jdbc:sqlite:/file/name' format")
+            .withRequiredArg().ofType(String.class);
+        parser.accepts("key", "Twitter OAuth API key")
             .withRequiredArg().ofType(String.class);
         return parser;
     }

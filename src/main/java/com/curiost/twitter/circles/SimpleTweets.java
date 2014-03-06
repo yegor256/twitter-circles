@@ -71,6 +71,8 @@ final class SimpleTweets implements Tweets {
         "(-?\\d+(?:\\.\\d+)?),(-?\\d+(?:\\.\\d+)?),(\\d+)(mi|km)"
     );
 
+    private final transient String oauth;
+
     private final transient String city;
 
     private final transient String tag;
@@ -80,7 +82,9 @@ final class SimpleTweets implements Tweets {
     /**
      * Ctor.
      */
-    SimpleTweets(final String cty, final String hash, final Date date) {
+    SimpleTweets(final String key, final String cty,
+        final String hash, final Date date) {
+        this.oauth = key;
         this.city = cty;
         this.tag = hash;
         this.since = date.getTime();
@@ -127,10 +131,16 @@ final class SimpleTweets implements Tweets {
         return new TwitterFactory(
             new ConfigurationBuilder()
                 .setDebugEnabled(true)
-                .setOAuthConsumerKey("zo0oeqeUWZWExIkE6e9g")
-                .setOAuthConsumerSecret("BCpOFHVQPDUxBt8xNGNxFCc4CxUhrTtyvVmvnpY2Q")
-                .setOAuthAccessToken("225097272-uO2hpD41EHYfp76fvg1x5LcRsTRSDU2LNcROJEzE")
-                .setOAuthAccessTokenSecret("QnnE41YL0d6rTYsjAnfPbbq3PaVvDzlZm6Ngvf4MtCQmr")
+                .setOAuthConsumerKey(this.oauth)
+                .setOAuthConsumerSecret(
+                    "aZS6RIOJSwHkxHJI1TwTgJZPuDObHZ6LDDDDXoioHA"
+                )
+                .setOAuthAccessToken(
+                    "225097272-uO2hpD41EHYfp76fvg1x5LcRsTRSDU2LNcROJEzE"
+                )
+                .setOAuthAccessTokenSecret(
+                    "QnnE41YL0d6rTYsjAnfPbbq3PaVvDzlZm6Ngvf4MtCQmr"
+                )
                 .build()
         ).getInstance();
     }
