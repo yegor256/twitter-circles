@@ -14,16 +14,15 @@ CITIES=(
     "37.4419444,-122.1419444,50mi"
 )
 KEYWORDS=(
-    "java"
-    "github OR w3c"
-    "aws OR dynamodb OR ec2 OR cloudfront OR cloudwatch"
-    "html OR json OR javascript"
+    "github"
+    "aws OR dynamodb OR ec2 OR cloudfront OR cloudwatch OR s3"
+    "html OR json OR javascript OR css OR xhtml OR html5 OR w3c"
 )
 for keyword in "${KEYWORDS[@]}"
 do
     for city in "${CITIES[@]}"
     do
-        java -jar target/circles.jar --city=${city} \
-            --tag=${keyword} --jdbc=jdbc:sqlite:${DB} --key=${OAUTH}
+        java -jar target/circles.jar "--city=${city}" \
+            "--tag=${keyword}" "--jdbc=jdbc:sqlite:${DB}" "--key=${OAUTH}"
     done
 done
