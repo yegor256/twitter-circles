@@ -1,5 +1,6 @@
 #!/bin/bash
-set -x
+
+git pull
 
 CITIES=(
     "52.3740300,4.8896900,30km"
