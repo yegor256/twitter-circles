@@ -53,6 +53,7 @@ def index(db):
         FROM circle AS c
         JOIN tweet AS t ON c.id = t.circle
         GROUP BY c.id
+        ORDER BY t.date
         """
     )
     bottle.response.set_header('Content-Type', 'text/xml')
