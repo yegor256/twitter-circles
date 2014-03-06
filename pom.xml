@@ -56,7 +56,8 @@
     </scm>
     <properties>
         <sqlite.file>${project.build.directory}/live.db</sqlite.file>
-        <city>52.3740300,4.8896900,30km</city>
+        <!-- <city>52.3740300,4.8896900,30km</city> --> <!-- Amsterdam, NL -->
+        <city>37.4419444,-122.1419444,50mi</city> <!-- Palo Alto, CA -->
         <tag>java</tag>
     </properties>
     <dependencies>
