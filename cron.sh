@@ -16,8 +16,8 @@ CITIES=(
 )
 KEYWORDS=(
     "github"
-    "aws OR dynamodb OR ec2 OR cloudfront OR cloudwatch OR s3"
-    "html OR json OR javascript OR css OR xhtml OR html5 OR w3c"
+    "aws OR dynamodb OR cloudfront OR cloudwatch"
+    "json OR javascript OR xhtml OR html5"
 )
 for keyword in "${KEYWORDS[@]}"
 do
