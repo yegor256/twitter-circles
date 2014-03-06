@@ -2,6 +2,8 @@
 set -e
 set -o pipefail
 
+source /etc/profile
+
 git pull
 DB=${HOME}/twitter.db
 OAUTH=$(cat ${HOME}/twitter.key)
