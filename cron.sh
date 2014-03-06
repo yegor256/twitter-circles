@@ -13,9 +13,9 @@ CITIES=(
 )
 KEYWORDS=(
     "java"
-    "github"
-    "aws"
-    "dynamo"
+    "github OR w3c"
+    "aws OR dynamodb OR ec2 OR cloudfront OR cloudwatch"
+    "html OR json OR javascript"
 )
 for keyword in "${KEYWORDS[@]}"
 do
