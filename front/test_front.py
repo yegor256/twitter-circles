@@ -31,56 +31,38 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 
 To run this script just do:
 
-$ python front.py
+$ py.test test_front.py
 """
 
-import bottle
-import socket
-from bottle_sqlite import SQLitePlugin
-import argparse
+import front
+import sqlite3
+import os
 
 
-@bottle.route('/', apply=[bottle.view('tpl/index.xml.tpl')])
-def index(db):
+path = 'target/sqlite.db'
+if not os.path.isfile(path):
+    raise 'Sqlite database file is absent: %s' % path
+conn = sqlite3.connect(path)
+db = conn.cursor()
+
+
+def test_index():
     """
-    Show full list of available circles.
-    :param db: Database
-    :return: HTML
+    Index can render data from Sqlite DB.
     """
-    cur = db.execute('SELECT id, city, tag FROM circle')
-    bottle.response.set_header('Content-Type', 'text/xml')
-    return dict(circles=cur.fetchall())
+    front.index(db)
 
 
-@bottle.route('/circle/<number:int>', apply=[bottle.view('tpl/circle.xml.tpl')])
-def circle(db, number):
+def test_circle():
     """
-    Show one circle page.
-    :param db: Database
-    :param number: Number of the circle
+    Circle page can render data from Sqlite DB.
     """
-    cur = db.execute(
-        'SELECT user, value FROM rank WHERE circle = ? ORDER BY value DESC',
-        (number,)
-    )
-    bottle.response.set_header('Content-Type', 'text/xml')
-    return dict(ranks=cur.fetchall())
+    front.circle(db, 1)
 
 
-@bottle.route('/xsl/<path:path>')
-def xsl(path):
+def test_static_xsl():
     """
-    Show static XSL file.
-    :param path: File path
-    :return: XSL content
+    Static XSL page can be rendered.
     """
-    bottle.response.set_header('Content-Type', 'application/xsl')
-    return bottle.static_file(path, root='xsl')
+    front.xsl('layout.xsl')
 
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("db")
-    args = parser.parse_args()
-    bottle.install(SQLitePlugin(dbfile=args.db))
-    bottle.run(host=socket.gethostname(), port=8081)
