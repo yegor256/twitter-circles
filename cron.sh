@@ -18,6 +18,7 @@ KEYWORDS=(
     "dynamo"
 )
 for keyword in "${KEYWORDS[@]}"
+do
     for city in "${CITIES[@]}"
     do
         java -jar target/circles.jar --city=${city} \
