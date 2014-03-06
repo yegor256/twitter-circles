@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 
 CITIES=(
     "52.3740300,4.8896900,30km",
@@ -7,5 +8,5 @@ CITIES=(
 for city in "${CITIES[@]}"
 do
     mvn test -DskipTests -Plive -Pcuriost \
-        -Dcity=${city} -Dtag=java -Dsqlite.file=~/twitter.db
+        -Dcity=${city} -Dtag=java -Dsqlite.file=${HOME}/twitter.db
 done
