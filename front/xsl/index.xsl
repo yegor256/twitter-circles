@@ -24,6 +24,8 @@
                 <xsl:value-of select="tag"/>
                 <xsl:text>&quot;</xsl:text>
             </a>
+            <xsl:text>: </xsl:text>
+            <xsl:value-of select="tweets"/>
         </p>
     </xsl:template>
 </xsl:stylesheet>

@@ -6,6 +6,7 @@
             <circle id='{{circle['id']}}'>
                 <city>{{circle['city']}}</city>
                 <tag>{{circle['tag']}}</tag>
+                <tweets>{{circle['sum']}}</tweets>
             </circle>
         % end
     </circles>
