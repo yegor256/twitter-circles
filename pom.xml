@@ -199,6 +199,8 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
+                            <finalName>circles</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
                             <archive>
                                 <manifest>
                                     <mainClass>com.curiost.twitter.circles.Main</mainClass>
@@ -215,7 +217,7 @@
     </build>
     <profiles>
         <profile>
-            <id>live</id>
+            <id>liquibase</id>
             <build>
                 <plugins>
                     <plugin>
@@ -231,30 +233,6 @@
                                 <configuration>
                                     <url>jdbc:sqlite:${sqlite.file}</url>
                                     <contexts>any,live</contexts>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.2.1</version>
-                        <executions>
-                            <execution>
-                                <id>run-circles</id>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>java</goal>
-                                </goals>
-                                <configuration>
-                                    <classpathScope>runtime</classpathScope>
-                                    <mainClass>com.curiost.twitter.circles.Main</mainClass>
-                                    <arguments>
-                                        <arg>--city=${city}</arg>
-                                        <arg>--tag=${tag}</arg>
-                                        <arg>--jdbc=jdbc:sqlite:${sqlite.file}</arg>
-                                        <arg>--key=${failsafe.twitter.oauth}</arg>
-                                    </arguments>
                                 </configuration>
                             </execution>
                         </executions>
