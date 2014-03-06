@@ -180,6 +180,7 @@
                             <goal>verify</goal>
                         </goals>
                         <configuration>
+                            <parallel>none</parallel>
                             <systemPropertyVariables>
                                 <failsafe.sqlite.jdbc>jdbc:sqlite:${project.build.directory}/sqlite.db</failsafe.sqlite.jdbc>
                                 <failsafe.twitter.oauth>${failsafe.twitter.oauth}</failsafe.twitter.oauth>
