@@ -72,32 +72,21 @@ final class SqlBuffer implements Buffer {
     }
 
     @Override
-    public void push(final Iterable<Tweet> tweets) throws IOException {
-        for (final Tweet tweet : tweets) {
-            try {
-                this.push(tweet);
-            } catch (SQLException ex) {
-                throw new IOException(ex);
-            }
-        }
-    }
-
-    @Override
-    public Date recent() throws IOException {
+    public long latest() throws IOException {
         try {
             return new JdbcSession(this.source.get())
-                .sql("SELECT date FROM tweet WHERE circle = ? ORDER BY date DESC LIMIT 1")
+                .sql("SELECT id FROM tweet WHERE circle = ? ORDER BY date DESC LIMIT 1")
                 .set(this.circle)
                 .select(
-                    new JdbcSession.Handler<Date>() {
+                    new JdbcSession.Handler<Long>() {
                         @Override
-                        public Date handle(final ResultSet rset,
+                        public Long handle(final ResultSet rset,
                             final Statement stmt) throws SQLException {
-                            final Date recent;
+                            final Long recent;
                             if (rset.next()) {
-                                recent = Utc.getTimestamp(rset, 1);
+                                recent = rset.getLong(1);
                             } else {
-                                recent = DateUtils.addDays(new Date(), -1);
+                                recent = 0L;
                             }
                             return recent;
                         }
@@ -114,7 +103,7 @@ final class SqlBuffer implements Buffer {
         final Collection<Tweet> tweets;
         try {
             tweets = new JdbcSession(this.source.get())
-                .sql("SELECT user, date FROM tweet WHERE circle = ? AND date < ?")
+                .sql("SELECT id, user, date FROM tweet WHERE circle = ? AND date < ?")
                 .set(this.circle)
                 .set(new Utc(threshold))
                 .select(
@@ -137,18 +126,19 @@ final class SqlBuffer implements Buffer {
         return tweets;
     }
 
-    /**
-     * Push one tweet.
-     * @param tweet The tweet
-     * @throws SQLException If fails
-     */
-    private void push(final Tweet tweet) throws SQLException {
-        new JdbcSession(this.source.get())
-            .sql("INSERT INTO tweet (circle, user, date) VALUES (?, ?, ?)")
-            .set(this.circle)
-            .set(tweet.user())
-            .set(new Utc(tweet.date()))
-            .insert(new VoidHandler());
+    @Override
+    public void push(final Tweet tweet) throws IOException {
+        try {
+            new JdbcSession(this.source.get())
+                .sql("INSERT INTO tweet (id, circle, user, date) VALUES (?, ?, ?, ?)")
+                .set(tweet.number())
+                .set(this.circle)
+                .set(tweet.user())
+                .set(new Utc(tweet.date()))
+                .insert(new VoidHandler());
+        } catch (SQLException ex) {
+            throw new IOException(ex);
+        }
     }
 
     /**
@@ -163,8 +153,9 @@ final class SqlBuffer implements Buffer {
         while (rset.next()) {
             tweets.add(
                 new Tweet.Simple(
-                    rset.getString(1),
-                    Utc.getTimestamp(rset, 1)
+                    rset.getLong(1),
+                    rset.getString(2),
+                    Utc.getTimestamp(rset, Tv.THREE)
                 )
             );
         }

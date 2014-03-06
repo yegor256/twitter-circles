@@ -31,6 +31,7 @@ package com.curiost.twitter.circles;
 
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
+import com.jcabi.log.Logger;
 import java.io.IOException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -65,10 +66,18 @@ final class Search {
      * @return Iterable list of users
      */
     Iterable<String> users() throws IOException {
-        this.buffer.push(this.tweets.fetch());
-        for (final Tweet tweet : this.buffer.pull()) {
+        int pushed = 0;
+        for (final Tweet tweet : this.tweets.fetch()) {
+            this.buffer.push(tweet);
             this.ranks.add(tweet.user(), 1);
+            ++pushed;
         }
+        int pulled = 0;
+        for (final Tweet tweet : this.buffer.pull()) {
+            this.ranks.add(tweet.user(), -1);
+            ++pulled;
+        }
+        Logger.info(this, "%d pushed, %d pulled", pushed, pulled);
         return this.ranks.top();
     }
 }

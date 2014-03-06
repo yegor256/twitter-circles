@@ -29,11 +29,7 @@
  */
 package com.curiost.twitter.circles;
 
-import com.google.common.collect.ImmutableMap;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 /**
  * Test case for {@link Users}.

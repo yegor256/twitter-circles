@@ -30,8 +30,6 @@
 package com.curiost.twitter.circles;
 
 import com.jcabi.aspects.Tv;
-import java.util.Date;
-import org.apache.commons.lang3.time.DateUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assume;
@@ -54,9 +52,7 @@ public final class SimpleTweetsITCase {
         final String oauth = System.getProperty("failsafe.twitter.oauth");
         Assume.assumeNotNull(oauth);
         final Tweets tweets = new SimpleTweets(
-            oauth,
-            "52.3740300,4.8896900,30km", "java",
-            DateUtils.addDays(new Date(), -1)
+            oauth, "52.3740300,4.8896900,30km", "java", 0L
         );
         MatcherAssert.assertThat(
             tweets.fetch(),

@@ -67,12 +67,12 @@ public final class Main {
                 new Search(
                     new SimpleTweets(
                         opts.valueOf("key").toString(),
-                        city, tag, buffer.recent()
+                        city, tag, buffer.latest()
                     ),
                     buffer,
                     new SqlRanks(sql, circle)
                 ).users(),
-                Tv.HUNDRED
+                Tv.TEN
             );
             for (final String user : users) {
                 Logger.info(Main.class, "twitter user: %s", user);
@@ -104,14 +104,14 @@ public final class Main {
      * @return Source
      */
     private static SqlSource source(final String url) {
+        final BoneCPDataSource src = new BoneCPDataSource();
+        src.setDriverClass("org.sqlite.JDBC");
+        src.setJdbcUrl(url);
+        src.setUsername("none");
+        src.setPassword("");
         return new SqlSource() {
             @Override
             public DataSource get() {
-                final BoneCPDataSource src = new BoneCPDataSource();
-                src.setDriverClass("org.sqlite.JDBC");
-                src.setJdbcUrl(url);
-                src.setUsername("none");
-                src.setPassword("");
                 return src;
             }
         };

@@ -29,7 +29,6 @@
  */
 package com.curiost.twitter.circles;
 
-import java.util.Arrays;
 import java.util.Date;
 import org.apache.commons.lang3.time.DateUtils;
 import org.hamcrest.MatcherAssert;
@@ -62,10 +61,10 @@ public final class SqlBufferITCase {
         );
         final int age = 100;
         buffer.push(
-            Arrays.<Tweet>asList(
-                new Tweet.Simple("jeff", DateUtils.addDays(new Date(), -age)),
-                new Tweet.Simple("peter", DateUtils.addDays(new Date(), -age))
-            )
+            new Tweet.Simple(1L, "jeff", DateUtils.addDays(new Date(), -age))
+        );
+        buffer.push(
+            new Tweet.Simple(2L, "peter", DateUtils.addDays(new Date(), -age))
         );
         MatcherAssert.assertThat(
             buffer.pull(),
@@ -82,19 +81,15 @@ public final class SqlBufferITCase {
      * @throws Exception If some problem inside
      */
     @Test
-    public void fetchesRecentDate() throws Exception {
+    public void fetchesRecentId() throws Exception {
         final Buffer buffer = new SqlBuffer(
             this.sql.source(), 1
         );
-        buffer.push(
-            Arrays.<Tweet>asList(
-                new Tweet.Simple("bunny", new Date()),
-                new Tweet.Simple("willy", new Date())
-            )
-        );
+        buffer.push(new Tweet.Simple(1L, "bunny", new Date()));
+        buffer.push(new Tweet.Simple(2L, "willy", new Date()));
         MatcherAssert.assertThat(
-            buffer.recent(),
-            Matchers.notNullValue()
+            buffer.latest(),
+            Matchers.is(2L)
         );
     }
 

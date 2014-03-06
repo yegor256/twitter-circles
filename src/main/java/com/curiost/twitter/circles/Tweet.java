@@ -46,6 +46,12 @@ import lombok.ToString;
 interface Tweet {
 
     /**
+     * Unique ID.
+     * @return ID
+     */
+    long number();
+
+    /**
      * User.
      * @return User name
      */
@@ -65,11 +71,17 @@ interface Tweet {
     @ToString
     @EqualsAndHashCode
     final class Simple implements Tweet {
+        private final transient long num;
         private final transient String name;
         private final transient long when;
-        Simple(final String user, final Date date) {
+        Simple(final long number, final String user, final Date date) {
+            this.num = number;
             this.name = user;
             this.when = date.getTime();
+        }
+        @Override
+        public long number() {
+            return this.num;
         }
         @Override
         public String user() {

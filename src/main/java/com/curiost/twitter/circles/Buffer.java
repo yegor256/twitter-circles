@@ -44,18 +44,18 @@ import java.util.Date;
 interface Buffer {
 
     /**
-     * Date of the recent tweet seen.
-     * @return Recent
+     * ID of the recent tweet seen.
+     * @return Latest tweet ID
      * @throws IOException If fails
      */
-    Date recent() throws IOException;
+    long latest() throws IOException;
 
     /**
-     * Add tweets.
-     * @param tweets Tweets to add
+     * Add tweet.
+     * @param tweet Tweet to add
      * @throws IOException If fails
      */
-    void push(Iterable<Tweet> tweets) throws IOException;
+    void push(Tweet tweets) throws IOException;
 
     /**
      * Pull all expired tweets.

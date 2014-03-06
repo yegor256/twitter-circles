@@ -200,7 +200,7 @@
                         <executions>
                             <execution>
                                 <id>live-sql-schema</id>
-                                <phase>generate-resources</phase>
+                                <phase>generate-test-resources</phase>
                                 <goals>
                                     <goal>update</goal>
                                 </goals>

@@ -33,7 +33,6 @@ import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import com.jcabi.aspects.Tv;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
@@ -83,11 +82,11 @@ final class SimpleTweets implements Tweets {
      * Ctor.
      */
     SimpleTweets(final String key, final String cty,
-        final String hash, final Date date) {
+        final String hash, final long latest) {
         this.oauth = key;
         this.city = cty;
         this.tag = hash;
-        this.since = date.getTime();
+        this.since = latest;
     }
 
     @Override
@@ -120,6 +119,9 @@ final class SimpleTweets implements Tweets {
             Double.parseDouble(matcher.group(Tv.THREE)),
             matcher.group(Tv.FOUR)
         );
+        if (this.since != 0) {
+            query.setSinceId(this.since);
+        }
         return query;
     }
 
@@ -175,6 +177,7 @@ final class SimpleTweets implements Tweets {
             }
             final Status status = this.items.poll();
             return new Tweet.Simple(
+                status.getId(),
                 status.getUser().getScreenName(),
                 status.getCreatedAt()
             );

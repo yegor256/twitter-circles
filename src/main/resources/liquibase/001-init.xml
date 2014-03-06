@@ -45,7 +45,7 @@
         </sql>
         <sql>
             CREATE TABLE tweet (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id INTEGER PRIMARY KEY,
                 circle INTEGER,
                 date DATETIME,
                 user VARCHAR(100)
