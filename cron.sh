@@ -3,6 +3,7 @@ set -x
 set -e
 set -o pipefail
 
+cd $(dirname $0)
 source /etc/profile
 
 git pull
