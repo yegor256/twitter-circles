@@ -85,7 +85,7 @@ def circle(db, number):
             WHERE id = ?
             """,
             (number,)
-        ).fetchall()
+        ).fetchone()
     )
 
 
