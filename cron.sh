@@ -23,7 +23,7 @@ daemonize -a -v -l ${DIR}/front.pid -p ${DIR}/front.pid -c ${DIR}/front \
 
 CITIES=(
     "52.3740300,4.8896900,30km"
-    "37.4419444,-122.1419444,50mi"
+    "37.4419444,-122.1419444,20mi"
 )
 KEYWORDS=(
     "github"
