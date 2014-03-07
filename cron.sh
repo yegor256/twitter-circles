@@ -1,15 +1,23 @@
 #!/bin/bash
-set -x
 set -e
 set -o pipefail
 
 cd $(dirname $0)
 source /etc/profile
+if [ ! -f /etc/init.d/functions ]; then
+    echo "You can run this script only in Linux"
+    exit -1;
+fi
+source /etc/init.d/functions
 
 git pull
 DB=${HOME}/twitter.db
 OAUTH=$(cat ${HOME}/twitter.key)
-mvn clean package -Pliquibase -Dsqlite.file=${DB}
+mvn --batch-mode --strict-checksums --errors --quiet \
+    -Pliquibase -Dsqlite.file=${DB} clean package
+daemon --restart --pidfile=${HOME}/front.pid --chroot=${HOME}/front \
+    --output=user.info --stderr=user.error \
+    python front.py ${HOME}/twitter.db
 
 CITIES=(
     "52.3740300,4.8896900,30km"
