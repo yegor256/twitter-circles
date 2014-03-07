@@ -8,15 +8,15 @@ if [ ! -f /etc/init.d/functions ]; then
     echo "You can run this script only in Linux"
     exit -1;
 fi
-source /etc/init.d/functions
 
 git pull
 DB=${HOME}/twitter.db
 OAUTH=$(cat ${HOME}/twitter.key)
 mvn --batch-mode --strict-checksums --errors --quiet \
     -Pliquibase -Dsqlite.file=${DB} clean package
-daemon --restart --pidfile=${HOME}/front.pid --chroot=${HOME}/front \
-    --output=user.info --stderr=user.error \
+# http://software.clapper.org/daemonize/
+daemonize -a -v -l ${HOME}/front.pid -p ${HOME}/front.pid -c ${HOME}/front \
+    -o ${HOME}/stdout.log -e ${HOME}/stderr.log \
     python front.py ${HOME}/twitter.db
 
 CITIES=(
