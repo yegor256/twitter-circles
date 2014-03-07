@@ -2,6 +2,8 @@
 set -e
 set -o pipefail
 
+source /etc/profile
+
 cd $(dirname $0)
 DIR=$(pwd)
 
