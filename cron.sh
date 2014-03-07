@@ -15,7 +15,7 @@ mvn --batch-mode --strict-checksums --errors --quiet \
 # http://software.clapper.org/daemonize/
 daemonize -a -v -l ${DIR}/front.pid -p ${DIR}/front.pid -c ${DIR}/front \
     -o ${DIR}/stdout.log -e ${DIR}/stderr.log \
-    python front.py ${DIR}/twitter.db
+    $(which python) front.py ${DIR}/twitter.db
 
 CITIES=(
     "52.3740300,4.8896900,30km"
