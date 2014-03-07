@@ -26,6 +26,7 @@
             </a>
             <xsl:text>: </xsl:text>
             <xsl:value-of select="tweets"/>
+            <xsl:text> </xsl:text>
             <a>
                 <xsl:attribute name="href">
                     <xsl:text>/circle/</xsl:text>
