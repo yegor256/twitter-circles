@@ -12,7 +12,18 @@
         <h1>
             <xsl:text>Users</xsl:text>
         </h1>
+        <xsl:apply-templates select="circle" />
         <xsl:apply-templates select="ranks/rank" />
+    </xsl:template>
+    <xsl:template match="circle">
+        <p>
+            <xsl:value-of select="id"/>
+            <xsl:text>: </xsl:text>
+            <xsl:value-of select="city"/>
+            <xsl:text> &quot;</xsl:text>
+            <xsl:value-of select="tag"/>
+            <xsl:text>&quot;</xsl:text>
+        </p>
     </xsl:template>
     <xsl:template match="ranks/rank">
         <p>

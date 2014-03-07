@@ -47,17 +47,18 @@ def index(db):
     :param db: Database
     :return: HTML
     """
-    cur = db.execute(
-        """
-        SELECT c.id, city, tag, COUNT(t.id) AS sum
-        FROM circle AS c
-        JOIN tweet AS t ON c.id = t.circle
-        GROUP BY c.id
-        ORDER BY t.date
-        """
-    )
     bottle.response.set_header('Content-Type', 'text/xml')
-    return dict(circles=cur.fetchall())
+    return dict(
+        circles=db.execute(
+            """
+            SELECT c.id, city, tag, COUNT(t.id) AS sum
+            FROM circle AS c
+            JOIN tweet AS t ON c.id = t.circle
+            GROUP BY c.id
+            ORDER BY t.date
+            """
+        ).fetchall()
+    )
 
 
 @bottle.route('/circle/<number:int>', apply=[bottle.view('tpl/circle.xml.tpl')])
@@ -67,17 +68,25 @@ def circle(db, number):
     :param db: Database
     :param number: Number of the circle
     """
-    cur = db.execute(
-        """
-        SELECT user, value
-        FROM rank
-        WHERE circle = ?
-        ORDER BY value DESC
-        """,
-        (number,)
-    )
     bottle.response.set_header('Content-Type', 'text/xml')
-    return dict(ranks=cur.fetchall())
+    return dict(
+        ranks=db.execute(
+            """
+            SELECT user, value
+            FROM rank
+            WHERE circle = ?
+            ORDER BY value DESC
+            """,
+            (number,)
+        ).fetchall(),
+        circle=db.execute(
+            """
+            SELECT * FROM circle
+            WHERE id = ?
+            """,
+            (number,)
+        ).fetchall()
+    )
 
 
 @bottle.route('/xsl/<path:path>')
