@@ -99,7 +99,7 @@ def delete(db, number):
     db.execute(
         """
         DELETE FROM circle
-        WHERE circle = ?
+        WHERE id = ?
         """,
         (number,)
     ).fetchall()

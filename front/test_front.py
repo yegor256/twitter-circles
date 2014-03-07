@@ -37,6 +37,8 @@ $ py.test test_front.py
 import front
 import sqlite3
 import os
+import pytest
+import bottle
 
 
 path = 'target/sqlite.db'
@@ -58,6 +60,14 @@ def test_circle():
     Circle page can render data from Sqlite DB.
     """
     front.circle(db, 1)
+
+
+def test_delete():
+    """
+    Index can delete data from Sqlite DB.
+    """
+    with pytest.raises(bottle.HTTPResponse):
+        front.delete(db, 1)
 
 
 def test_static_xsl():
