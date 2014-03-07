@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2013, Curiost.com
+ * Copyright (c) 2009-2014, Curiost.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@
  */
 
 /**
- * Circles in Twitter.
+ * Circles, tests.
  *
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$

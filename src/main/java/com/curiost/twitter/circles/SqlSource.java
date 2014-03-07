@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2013, Curiost.com
+ * Copyright (c) 2009-2014, Curiost.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@ package com.curiost.twitter.circles;
 
 import com.jcabi.aspects.Immutable;
 import javax.sql.DataSource;
+import javax.validation.constraints.NotNull;
 
 /**
  * SQL data source.
@@ -46,6 +47,7 @@ interface SqlSource {
      * Get data source.
      * @return Data source
      */
+    @NotNull
     DataSource get();
 
 }

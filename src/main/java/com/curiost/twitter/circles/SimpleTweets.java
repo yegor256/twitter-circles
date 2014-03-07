@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2013, Curiost.com
+ * Copyright (c) 2009-2014, Curiost.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -70,16 +70,33 @@ final class SimpleTweets implements Tweets {
         "(-?\\d+(?:\\.\\d+)?),(-?\\d+(?:\\.\\d+)?),(\\d+)(mi|km)"
     );
 
+    /**
+     * Twitter key.
+     */
     private final transient String oauth;
 
+    /**
+     * City.
+     */
     private final transient String city;
 
+    /**
+     * Tag.
+     */
     private final transient String tag;
 
+    /**
+     * Last seen.
+     */
     private final transient long since;
 
     /**
      * Ctor.
+     * @param key Twitter key
+     * @param cty City
+     * @param hash Tag
+     * @param latest Latest tweet seen
+     * @checkstyle ParameterNumberCheck (5 lines)
      */
     SimpleTweets(final String key, final String cty,
         final String hash, final long latest) {
@@ -151,8 +168,18 @@ final class SimpleTweets implements Tweets {
      * Endless row of tweets.
      */
     private final class Row implements Iterator<Tweet> {
+        /**
+         * Items.
+         */
         private final transient Queue<Status> items = new LinkedList<Status>();
+        /**
+         * Recent query.
+         */
         private transient Query query;
+        /**
+         * Ctor.
+         * @param qry Query
+         */
         Row(final Query qry) {
             this.query = qry;
         }

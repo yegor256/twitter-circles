@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2013, Curiost.com
+ * Copyright (c) 2009-2014, Curiost.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,10 +52,27 @@ import lombok.ToString;
 @EqualsAndHashCode(of = "source")
 final class SqlCircles {
 
+    /**
+     * Finder.
+     */
+    private static final JdbcSession.Handler<Integer> FINDER =
+        new JdbcSession.Handler<Integer>() {
+            @Override
+            public Integer handle(final ResultSet rset,
+                final Statement stmt) throws SQLException {
+                rset.next();
+                return rset.getInt(1);
+            }
+        };
+
+    /**
+     * Source.
+     */
     private final transient SqlSource source;
 
     /**
      * Ctor.
+     * @param src Source
      */
     SqlCircles(final SqlSource src) {
         this.source = src;
@@ -78,16 +95,7 @@ final class SqlCircles {
                 .sql("SELECT id FROM circle WHERE city = ? AND tag = ?")
                 .set(city)
                 .set(tag)
-                .select(
-                    new JdbcSession.Handler<Integer>() {
-                        @Override
-                        public Integer handle(final ResultSet rset,
-                            final Statement stmt) throws SQLException {
-                            rset.next();
-                            return rset.getInt(1);
-                        }
-                    }
-                );
+                .select(SqlCircles.FINDER);
         } catch (SQLException ex) {
             throw new IOException(ex);
         }

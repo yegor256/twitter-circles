@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2013, Curiost.com
+ * Copyright (c) 2009-2014, Curiost.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,8 +44,17 @@ import joptsimple.OptionSet;
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
+ * @checkstyle MultipleStringLiteralsCheck (500 lines)
  */
 public final class Main {
+
+    /**
+     * Utility class.
+     */
+    private Main() {
+        // intentionally empty
+    }
 
     /**
      * Entry point.
@@ -88,7 +97,7 @@ public final class Main {
         final OptionParser parser = new OptionParser();
         parser.accepts("help", "Show detailed instructions").forHelp();
         parser.accepts("city", "Twitter geolocation, e.g. '13.4,-15.5,3mi'")
-            .withRequiredArg().ofType(String.class);;
+            .withRequiredArg().ofType(String.class);
         parser.accepts("tag", "Twitter hash tag")
             .withRequiredArg().ofType(String.class);
         parser.accepts("jdbc", "JDBC URL in 'jdbc:sqlite:/file/name' format")

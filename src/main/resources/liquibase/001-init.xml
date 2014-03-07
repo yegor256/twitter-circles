@@ -49,7 +49,8 @@
                 number INTEGER,
                 circle INTEGER,
                 date DATETIME,
-                user VARCHAR(100)
+                user VARCHAR(100),
+                FOREIGN KEY(circle) REFERENCES circle(id) ON DELETE CASCADE
             );
         </sql>
         <sql>
@@ -58,7 +59,8 @@
                 circle INTEGER,
                 user VARCHAR(100),
                 value INTEGER,
-                UNIQUE(circle, user)
+                UNIQUE(circle, user),
+                FOREIGN KEY(circle) REFERENCES circle(id) ON DELETE CASCADE
             );
         </sql>
     </changeSet>

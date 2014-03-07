@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2013, Curiost.com
+ * Copyright (c) 2009-2014, Curiost.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,7 @@ package com.curiost.twitter.circles;
 import com.jcabi.aspects.Immutable;
 import com.jcabi.aspects.Loggable;
 import java.util.Date;
+import javax.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -55,12 +56,14 @@ interface Tweet {
      * User.
      * @return User name
      */
+    @NotNull
     String user();
 
     /**
      * When it happened.
      * @return Date
      */
+    @NotNull
     Date date();
 
     /**
@@ -71,9 +74,24 @@ interface Tweet {
     @ToString
     @EqualsAndHashCode
     final class Simple implements Tweet {
+        /**
+         * Number.
+         */
         private final transient long num;
+        /**
+         * Name.
+         */
         private final transient String name;
+        /**
+         * When happened.
+         */
         private final transient long when;
+        /**
+         * Ctor.
+         * @param number Number of it
+         * @param user User name
+         * @param date Date of tweet
+         */
         Simple(final long number, final String user, final Date date) {
             this.num = number;
             this.name = user;

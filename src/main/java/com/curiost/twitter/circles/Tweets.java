@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2013, Curiost.com
+ * Copyright (c) 2009-2014, Curiost.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,7 @@ package com.curiost.twitter.circles;
 
 import com.jcabi.aspects.Immutable;
 import java.io.IOException;
+import javax.validation.constraints.NotNull;
 
 /**
  * Tweets.
@@ -45,7 +46,9 @@ interface Tweets {
     /**
      * Fetch them all.
      * @return Tweets
+     * @throws IOException If fails
      */
+    @NotNull
     Iterable<Tweet> fetch() throws IOException;
 
 }

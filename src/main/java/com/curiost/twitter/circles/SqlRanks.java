@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2013, Curiost.com
+ * Copyright (c) 2009-2014, Curiost.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,12 +54,37 @@ import lombok.ToString;
 @EqualsAndHashCode(of = { "source", "circle" })
 final class SqlRanks implements Ranks {
 
+    /**
+     * Tops.
+     */
+    private static final JdbcSession.Handler<Collection<String>> TOPS =
+        new JdbcSession.Handler<Collection<String>>() {
+            @Override
+            public Collection<String> handle(final ResultSet rset,
+                final Statement stmt) throws SQLException {
+                final Collection<String> names =
+                    new LinkedList<String>();
+                while (rset.next()) {
+                    names.add(rset.getString(1));
+                }
+                return names;
+            }
+        };
+
+    /**
+     * Source.
+     */
     private final transient SqlSource source;
 
+    /**
+     * Circle.
+     */
     private final transient int circle;
 
     /**
      * Ctor.
+     * @param src Source
+     * @param crc Circle
      */
     SqlRanks(final SqlSource src, final int crc) {
         this.source = src;
@@ -70,10 +95,12 @@ final class SqlRanks implements Ranks {
     public void add(final String user, final int value) throws IOException {
         try {
             new JdbcSession(this.source.get())
+                // @checkstyle LineLength (1 line)
                 .sql("INSERT OR IGNORE INTO rank (circle, user, value) VALUES (?, ?, 0)")
                 .set(this.circle)
                 .set(user)
                 .execute()
+                    // @checkstyle LineLength (1 line)
                 .sql("UPDATE rank SET value = value + ? WHERE circle = ? AND user = ?")
                 .set(value)
                 .set(this.circle)
@@ -88,22 +115,10 @@ final class SqlRanks implements Ranks {
     public Iterable<String> top() throws IOException {
         try {
             return new JdbcSession(this.source.get())
+                // @checkstyle LineLength (1 line)
                 .sql("SELECT user FROM rank WHERE circle = ? ORDER BY value DESC")
                 .set(this.circle)
-                .select(
-                    new JdbcSession.Handler<Collection<String>>() {
-                        @Override
-                        public Collection<String> handle(final ResultSet rset,
-                            final Statement stmt) throws SQLException {
-                            final Collection<String> names =
-                                new LinkedList<String>();
-                            while (rset.next()) {
-                                names.add(rset.getString(1));
-                            }
-                            return names;
-                        }
-                    }
-                );
+                .select(SqlRanks.TOPS);
         } catch (SQLException ex) {
             throw new IOException(ex);
         }

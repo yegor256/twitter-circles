@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2013, Curiost.com
+ * Copyright (c) 2009-2014, Curiost.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,6 +44,7 @@ public final class SqlCirclesITCase {
 
     /**
      * SQL source.
+     * @checkstyle VisibilityModifierCheck (4 lines)
      */
     @Rule
     public final transient SqlRule sql = new SqlRule();

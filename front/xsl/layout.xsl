@@ -14,6 +14,7 @@
                 <meta name="author" content="curiost.com"/>
                 <link rel="icon" type="image/gif" href="http://img.curiost.com/favicon.gif"/>
                 <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet"/>
+                <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 <xsl:apply-template select="." mode="head"/>
             </head>

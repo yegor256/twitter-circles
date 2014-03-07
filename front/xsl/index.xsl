@@ -26,6 +26,14 @@
             </a>
             <xsl:text>: </xsl:text>
             <xsl:value-of select="tweets"/>
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:text>/circle/</xsl:text>
+                    <xsl:value-of select="@id"/>
+                    <xsl:text>/delete</xsl:text>
+                </xsl:attribute>
+                <i class="fa fa-trash-o"></i>
+            </a>
         </p>
     </xsl:template>
 </xsl:stylesheet>

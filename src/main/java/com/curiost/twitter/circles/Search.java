@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2013, Curiost.com
+ * Copyright (c) 2009-2014, Curiost.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,12 +49,27 @@ import lombok.ToString;
 @EqualsAndHashCode(of = { "tweets", "buffer", "ranks" })
 final class Search {
 
+    /**
+     * Tweets.
+     */
     private final transient Tweets tweets;
 
+    /**
+     * Buffer.
+     */
     private final transient Buffer buffer;
 
+    /**
+     * Ranks.
+     */
     private final transient Ranks ranks;
 
+    /**
+     * Ctor.
+     * @param twts Tweets
+     * @param buf Buffer
+     * @param rnks Ranks
+     */
     Search(final Tweets twts, final Buffer buf, final Ranks rnks) {
         this.tweets = twts;
         this.buffer = buf;
@@ -64,8 +79,9 @@ final class Search {
     /**
      * Iterate users in the circle.
      * @return Iterable list of users
+     * @throws IOException If fails
      */
-    Iterable<String> users() throws IOException {
+    public Iterable<String> users() throws IOException {
         int pushed = 0;
         for (final Tweet tweet : this.tweets.fetch()) {
             this.buffer.push(tweet);

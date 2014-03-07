@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2013, Curiost.com
+ * Copyright (c) 2009-2014, Curiost.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,6 +52,7 @@ import org.apache.commons.lang3.time.DateUtils;
  * @author Yegor Bugayenko (yegor@tpc2.com)
  * @version $Id$
  * @since 0.1
+ * @checkstyle ClassDataAbstractionCouplingCheck (500 lines)
  */
 @Immutable
 @Loggable(Loggable.DEBUG)
@@ -59,12 +60,50 @@ import org.apache.commons.lang3.time.DateUtils;
 @EqualsAndHashCode(of = { "source", "circle" })
 final class SqlBuffer implements Buffer {
 
+    /**
+     * Latest finder.
+     */
+    private static final JdbcSession.Handler<Long> LATER =
+        new JdbcSession.Handler<Long>() {
+            @Override
+            public Long handle(final ResultSet rset,
+                final Statement stmt) throws SQLException {
+                final Long recent;
+                if (rset.next()) {
+                    recent = rset.getLong(1);
+                } else {
+                    recent = 0L;
+                }
+                return recent;
+            }
+        };
+
+    /**
+     * Puller.
+     */
+    private static final JdbcSession.Handler<Collection<Tweet>> PULLER =
+        new JdbcSession.Handler<Collection<Tweet>>() {
+            @Override
+            public Collection<Tweet> handle(final ResultSet rset,
+                final Statement stmt) throws SQLException {
+                return SqlBuffer.fetch(rset);
+            }
+        };
+
+    /**
+     * Source.
+     */
     private final transient SqlSource source;
 
+    /**
+     * Circle.
+     */
     private final transient int circle;
 
     /**
      * Ctor.
+     * @param src Source
+     * @param crc Circle
      */
     SqlBuffer(final SqlSource src, final int crc) {
         this.source = src;
@@ -75,23 +114,10 @@ final class SqlBuffer implements Buffer {
     public long latest() throws IOException {
         try {
             return new JdbcSession(this.source.get())
+                // @checkstyle LineLength (1 line)
                 .sql("SELECT number FROM tweet WHERE circle = ? ORDER BY date DESC LIMIT 1")
                 .set(this.circle)
-                .select(
-                    new JdbcSession.Handler<Long>() {
-                        @Override
-                        public Long handle(final ResultSet rset,
-                            final Statement stmt) throws SQLException {
-                            final Long recent;
-                            if (rset.next()) {
-                                recent = rset.getLong(1);
-                            } else {
-                                recent = 0L;
-                            }
-                            return recent;
-                        }
-                    }
-                );
+                .select(SqlBuffer.LATER);
         } catch (SQLException ex) {
             throw new IOException(ex);
         }
@@ -103,18 +129,11 @@ final class SqlBuffer implements Buffer {
         final Collection<Tweet> tweets;
         try {
             tweets = new JdbcSession(this.source.get())
+                // @checkstyle LineLength (1 line)
                 .sql("SELECT number, user, date FROM tweet WHERE circle = ? AND date < ?")
                 .set(this.circle)
                 .set(new Utc(threshold))
-                .select(
-                    new JdbcSession.Handler<Collection<Tweet>>() {
-                        @Override
-                        public Collection<Tweet> handle(final ResultSet rset,
-                            final Statement stmt) throws SQLException {
-                            return SqlBuffer.fetch(rset);
-                        }
-                    }
-                );
+                .select(SqlBuffer.PULLER);
             new JdbcSession(this.source.get())
                 .sql("DELETE FROM tweet WHERE circle = ? AND date < ?")
                 .set(this.circle)
@@ -130,6 +149,7 @@ final class SqlBuffer implements Buffer {
     public void push(final Tweet tweet) throws IOException {
         try {
             new JdbcSession(this.source.get())
+                // @checkstyle LineLength (1 line)
                 .sql("INSERT INTO tweet (number, circle, user, date) VALUES (?, ?, ?, ?)")
                 .set(tweet.number())
                 .set(this.circle)
@@ -147,6 +167,7 @@ final class SqlBuffer implements Buffer {
      * @return Collection of them
      * @throws SQLException If fails
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     private static Collection<Tweet> fetch(final ResultSet rset)
         throws SQLException {
         final Collection<Tweet> tweets = new LinkedList<Tweet>();

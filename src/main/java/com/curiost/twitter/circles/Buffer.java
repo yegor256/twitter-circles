@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2012-2013, Curiost.com
+ * Copyright (c) 2009-2014, Curiost.com
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,7 @@ package com.curiost.twitter.circles;
 
 import com.jcabi.aspects.Immutable;
 import java.io.IOException;
-import java.util.Date;
+import javax.validation.constraints.NotNull;
 
 /**
  * Buffer.
@@ -52,16 +52,17 @@ interface Buffer {
 
     /**
      * Add tweet.
-     * @param tweet Tweet to add
+     * @param tweet Tweet to push
      * @throws IOException If fails
      */
-    void push(Tweet tweets) throws IOException;
+    void push(@NotNull Tweet tweet) throws IOException;
 
     /**
      * Pull all expired tweets.
      * @return Tweets expired
      * @throws IOException If fails
      */
+    @NotNull
     Iterable<Tweet> pull() throws IOException;
 
 }

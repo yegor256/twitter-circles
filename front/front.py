@@ -89,6 +89,23 @@ def circle(db, number):
     )
 
 
+@bottle.route('/circle/<number:int>/delete')
+def delete(db, number):
+    """
+    Delete given circle.
+    :param db: Database
+    :param number: Number of the circle
+    """
+    db.execute(
+        """
+        DELETE FROM circle
+        WHERE circle = ?
+        """,
+        (number,)
+    ).fetchall()
+    bottle.redirect("/")
+
+
 @bottle.route('/xsl/<path:path>')
 def xsl(path):
     """
