@@ -84,9 +84,10 @@ def circle(db, number):
     return dict(
         ranks=db.execute(
             """
-            SELECT user, value
-            FROM rank LEFT JOIN spam ON spam.rank = rank.id
+            SELECT rank.id, user, SUM(value) AS value FROM rank
+            LEFT JOIN spam ON spam.rank = rank.id
             WHERE circle = ? AND spam.id IS NULL
+            GROUP BY rank.id
             ORDER BY value DESC
             """,
             (number,)

@@ -117,12 +117,19 @@ class TestWeb(unittest.TestCase):
         db = connection.cursor()
         db.execute(
             """
-            INSERT OR IGNORE INTO circle (city, tag) VALUES ('10,10,10mi', 'a')
+            INSERT OR IGNORE INTO circle (city, tag) VALUES ('10,10,10mi', 't')
             """
         )
         self.fix_circle = db.execute(
-            "SELECT id FROM circle LIMIT 1"
+            "SELECT id FROM circle ORDER BY id DESC LIMIT 1"
         ).fetchone()[0]
+        for user in ['first', 'second', 'third']:
+            db.execute(
+                """
+                INSERT OR IGNORE INTO rank (circle, user) VALUES (?, ?)
+                """,
+                (self.fix_circle, user)
+            )
         db.close()
         connection.commit()
 
