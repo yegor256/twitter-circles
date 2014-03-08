@@ -37,50 +37,68 @@ $ py.test test_front.py
 import front
 import sqlite3
 import os
-import pytest
+import unittest
 import bottle
+import webtest
 
 
-path = 'target/sqlite.db'
-if not os.path.isfile(path):
-    raise 'Sqlite database file is absent: %s' % path
-conn = sqlite3.connect(path)
-db = conn.cursor()
+app = webtest.TestApp(front.app)
 
 
-def test_index():
-    """
-    Index can render data from Sqlite DB.
-    """
-    front.index(db)
+class TestMethods(unittest.TestCase):
+    def setUp(self):
+        path = 'target/sqlite.db'
+        if not os.path.isfile(path):
+            raise 'Sqlite database file is absent: %s' % path
+        self.connection = sqlite3.connect(path)
+        self.db = self.connection.cursor()
+
+    def tearDown(self):
+        self.connection.commit()
+        self.db.close()
+
+    def test_index(self):
+        """
+        Index can render data from Sqlite DB.
+        """
+        front.index(self.db)
+
+    def test_circle(self):
+        """
+        Circle page can render data from Sqlite DB.
+        """
+        front.circle(self.db, 1)
+
+    def test_delete(self):
+        """
+        Index can delete data from Sqlite DB.
+        """
+        with self.assertRaises(bottle.HTTPResponse):
+            front.delete(self.db, 1)
+
+    def test_spam(self):
+        """
+        Index can mark rank as spam.
+        """
+        with self.assertRaises(bottle.HTTPResponse):
+            front.spam(self.db, 1, 1)
+
+    def test_static_xsl(self):
+        """
+        Static XSL page can be rendered.
+        """
+        front.xsl('layout.xsl')
 
 
-def test_circle():
-    """
-    Circle page can render data from Sqlite DB.
-    """
-    front.circle(db, 1)
+class TestWeb(unittest.TestCase):
+    def test_index_web(self):
+        """
+        Test index page in full integration cycle.
+        """
+        assert app.get('/').status == '200 OK'
 
-
-def test_delete():
-    """
-    Index can delete data from Sqlite DB.
-    """
-    with pytest.raises(bottle.HTTPResponse):
-        front.delete(db, 1)
-
-
-def test_spam():
-    """
-    Index can mark rank as spam.
-    """
-    with pytest.raises(bottle.HTTPResponse):
-        front.spam(db, 1, 1)
-
-
-def test_static_xsl():
-    """
-    Static XSL page can be rendered.
-    """
-    front.xsl('layout.xsl')
-
+    def test_circle_web(self):
+        """
+        Test circle page in full integration cycle.
+        """
+        assert app.get('/circle/1').status == '200 OK'

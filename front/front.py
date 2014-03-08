@@ -36,11 +36,14 @@ $ python front.py
 
 import bottle
 import socket
-from bottle_sqlite import SQLitePlugin
+import bottle_sqlite
 import argparse
 
 
-@bottle.route('/', apply=[bottle.view('tpl/index.xml.tpl')])
+app = bottle.Bottle()
+
+
+@app.get('/', apply=[bottle.view('tpl/index.xml.tpl')])
 def index(db):
     """
     Show full list of available circles.
@@ -61,7 +64,7 @@ def index(db):
     )
 
 
-@bottle.route('/circle/<number:int>', apply=[bottle.view('tpl/circle.xml.tpl')])
+@app.get('/circle/<number:int>', apply=[bottle.view('tpl/circle.xml.tpl')])
 def circle(db, number):
     """
     Show one circle page.
@@ -89,7 +92,7 @@ def circle(db, number):
     )
 
 
-@bottle.route('/delete/<number:int>')
+@app.get('/delete/<number:int>')
 def delete(db, number):
     """
     Delete given circle.
@@ -106,7 +109,7 @@ def delete(db, number):
     bottle.redirect("/")
 
 
-@bottle.route('/spam/<crc:int>/<number:int>')
+@app.get('/spam/<crc:int>/<number:int>')
 def spam(db, crc, number):
     """
     Mark given rank as spam.
@@ -124,7 +127,7 @@ def spam(db, crc, number):
     bottle.redirect("/circle/%s" % crc)
 
 
-@bottle.route('/xsl/<path:path>')
+@app.get('/xsl/<path:path>')
 def xsl(path):
     """
     Show static XSL file.
@@ -139,5 +142,5 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("db")
     args = parser.parse_args()
-    bottle.install(SQLitePlugin(dbfile=args.db))
-    bottle.run(host=socket.gethostname(), port=8081)
+    bottle.install(bottle_sqlite.SQLitePlugin(dbfile=args.db))
+    bottle.run(host=socket.gethostname(), reloader=True, port=8081, debug=True)
