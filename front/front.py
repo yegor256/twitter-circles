@@ -71,6 +71,15 @@ def circle(db, number):
     :param db: Database
     :param number: Number of the circle
     """
+    crc = db.execute(
+        """
+        SELECT * FROM circle
+        WHERE id = ?
+        """,
+        (number,)
+    ).fetchone()
+    if crc is None:
+        bottle.abort(404, "Circle %d not found" % number)
     bottle.response.set_header('Content-Type', 'text/xml')
     return dict(
         ranks=db.execute(
@@ -82,13 +91,7 @@ def circle(db, number):
             """,
             (number,)
         ).fetchall(),
-        circle=db.execute(
-            """
-            SELECT * FROM circle
-            WHERE id = ?
-            """,
-            (number,)
-        ).fetchone()
+        circle=crc
     )
 
 
@@ -119,7 +122,7 @@ def spam(db, crc, number):
     """
     db.execute(
         """
-        INSERT INTO spam (rank)
+        INSERT OR IGNORE INTO spam (rank)
         VALUES (?)
         """,
         (number,)
@@ -142,5 +145,5 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("db")
     args = parser.parse_args()
-    bottle.install(bottle_sqlite.SQLitePlugin(dbfile=args.db))
-    bottle.run(host=socket.gethostname(), reloader=True, port=8081, debug=True)
+    app.install(bottle_sqlite.SQLitePlugin(dbfile=args.db))
+    bottle.run(app=app, host=socket.gethostname(), port=8081)

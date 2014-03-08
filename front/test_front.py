@@ -39,19 +39,37 @@ import sqlite3
 import os
 import unittest
 import bottle
+import bottle_sqlite
 import webtest
 
 
-app = webtest.TestApp(front.app)
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
+db_path = '../target/sqlite.db'
+if not os.path.isfile(db_path):
+    raise BaseException('Sqlite database file is absent: %s' % db_path)
 
 
 class TestMethods(unittest.TestCase):
     def setUp(self):
-        path = 'target/sqlite.db'
-        if not os.path.isfile(path):
-            raise 'Sqlite database file is absent: %s' % path
-        self.connection = sqlite3.connect(path)
+        self.connection = sqlite3.connect(db_path)
         self.db = self.connection.cursor()
+        self.db.execute(
+            """
+            INSERT OR IGNORE INTO circle (city, tag) VALUES ('10,10,10mi', 'a')
+            """
+        )
+        self.fix_circle = self.db.execute(
+            "SELECT id FROM circle LIMIT 1"
+        ).fetchone()[0]
+        self.db.execute(
+            """
+            INSERT OR IGNORE INTO rank (circle, user) VALUES (?, 'someone')
+            """,
+            (self.fix_circle, )
+        )
+        self.fix_rank = self.db.execute(
+            "SELECT id FROM rank WHERE circle = ? LIMIT 1", (self.fix_circle, )
+        ).fetchone()[0]
 
     def tearDown(self):
         self.connection.commit()
@@ -67,21 +85,21 @@ class TestMethods(unittest.TestCase):
         """
         Circle page can render data from Sqlite DB.
         """
-        front.circle(self.db, 1)
+        front.circle(self.db, self.fix_circle)
 
     def test_delete(self):
         """
         Index can delete data from Sqlite DB.
         """
         with self.assertRaises(bottle.HTTPResponse):
-            front.delete(self.db, 1)
+            front.delete(self.db, self.fix_circle)
 
     def test_spam(self):
         """
         Index can mark rank as spam.
         """
         with self.assertRaises(bottle.HTTPResponse):
-            front.spam(self.db, 1, 1)
+            front.spam(self.db, self.fix_circle, self.fix_rank)
 
     def test_static_xsl(self):
         """
@@ -91,14 +109,41 @@ class TestMethods(unittest.TestCase):
 
 
 class TestWeb(unittest.TestCase):
-    def test_index_web(self):
+    def setUp(self):
+        self.app = webtest.TestApp(front.app)
+        self.plugin = bottle_sqlite.SQLitePlugin(dbfile=db_path)
+        front.app.install(self.plugin)
+        connection = sqlite3.connect(db_path)
+        db = connection.cursor()
+        db.execute(
+            """
+            INSERT OR IGNORE INTO circle (city, tag) VALUES ('10,10,10mi', 'a')
+            """
+        )
+        self.fix_circle = db.execute(
+            "SELECT id FROM circle LIMIT 1"
+        ).fetchone()[0]
+        db.close()
+        connection.commit()
+
+    def tearDown(self):
+        front.app.uninstall(self.plugin)
+
+    def test_index(self):
         """
         Test index page in full integration cycle.
         """
-        assert app.get('/').status == '200 OK'
+        assert self.app.get('/').status == '200 OK'
 
-    def test_circle_web(self):
+    def test_circle(self):
         """
         Test circle page in full integration cycle.
         """
-        assert app.get('/circle/1').status == '200 OK'
+        assert self.app.get('/circle/%d' % self.fix_circle).status == '200 OK'
+
+    def test_xsl(self):
+        """
+        Test XSL static pages.
+        """
+        assert self.app.get('/xsl/layout.xsl').status == '200 OK'
+
