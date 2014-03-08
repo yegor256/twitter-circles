@@ -7,6 +7,8 @@
                 <city>{{circle['city']}}</city>
                 <tag>{{circle['tag']}}</tag>
                 <tweets>{{circle['sum']}}</tweets>
+                <link rel='see' href='/circle/{{circle['id']}}'/>
+                <link rel='delete' href='/delete/{{circle['id']}}'/>
             </circle>
         % end
     </circles>

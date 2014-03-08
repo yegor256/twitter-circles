@@ -73,8 +73,8 @@ def circle(db, number):
         ranks=db.execute(
             """
             SELECT user, value
-            FROM rank
-            WHERE circle = ?
+            FROM rank LEFT JOIN spam ON spam.rank = rank.id
+            WHERE circle = ? AND spam.id IS NULL
             ORDER BY value DESC
             """,
             (number,)
@@ -89,7 +89,7 @@ def circle(db, number):
     )
 
 
-@bottle.route('/circle/<number:int>/delete')
+@bottle.route('/delete/<number:int>')
 def delete(db, number):
     """
     Delete given circle.
@@ -104,6 +104,24 @@ def delete(db, number):
         (number,)
     ).fetchall()
     bottle.redirect("/")
+
+
+@bottle.route('/spam/<crc:int>/<number:int>')
+def spam(db, crc, number):
+    """
+    Mark given rank as spam.
+    :param db: Database
+    :param crc: Circle ID
+    :param number: Number of the rank
+    """
+    db.execute(
+        """
+        INSERT INTO spam (rank)
+        VALUES (?)
+        """,
+        (number,)
+    ).fetchall()
+    bottle.redirect("/circle/%s" % crc)
 
 
 @bottle.route('/xsl/<path:path>')

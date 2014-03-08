@@ -11,6 +11,8 @@
             <rank>
                 <user>{{rank['user']}}</user>
                 <value>{{rank['value']}}</value>
+                <link rel='twitter' href='http://www.twitter.com/{{rank['user']}}'/>
+                <link rel='spam' href='/spam/{{circle['id']}}/{{rank['id']}}'/>
             </rank>
         % end
     </ranks>

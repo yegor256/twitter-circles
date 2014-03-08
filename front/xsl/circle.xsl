@@ -29,14 +29,20 @@
         <p>
             <a>
                 <xsl:attribute name="href">
-                    <xsl:text>https://twitter.com/</xsl:text>
-                    <xsl:value-of select="user"/>
+                    <xsl:value-of select="link[@rel='twitter']/@href"/>
                 </xsl:attribute>
                 <xsl:text>@</xsl:text>
                 <xsl:value-of select="user"/>
             </a>
             <xsl:text>: </xsl:text>
             <xsl:value-of select="value"/>
+            <xsl:text> </xsl:text>
+            <a>
+                <xsl:attribute name="href">
+                    <xsl:value-of select="link[@rel='spam']/@href"/>
+                </xsl:attribute>
+                <i class="fa fa-trash-o"></i>
+            </a>
         </p>
     </xsl:template>
 </xsl:stylesheet>

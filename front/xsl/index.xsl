@@ -15,8 +15,7 @@
         <p>
             <a>
                 <xsl:attribute name="href">
-                    <xsl:text>/circle/</xsl:text>
-                    <xsl:value-of select="@id"/>
+                    <xsl:value-of select="link[@rel='see']/@href"/>
                 </xsl:attribute>
                 <xsl:value-of select="city"/>
                 <xsl:text> </xsl:text>
@@ -29,9 +28,7 @@
             <xsl:text> </xsl:text>
             <a>
                 <xsl:attribute name="href">
-                    <xsl:text>/circle/</xsl:text>
-                    <xsl:value-of select="@id"/>
-                    <xsl:text>/delete</xsl:text>
+                    <xsl:value-of select="link[@rel='delete']/@href"/>
                 </xsl:attribute>
                 <i class="fa fa-trash-o"></i>
             </a>

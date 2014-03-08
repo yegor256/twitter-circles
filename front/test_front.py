@@ -70,6 +70,14 @@ def test_delete():
         front.delete(db, 1)
 
 
+def test_spam():
+    """
+    Index can mark rank as spam.
+    """
+    with pytest.raises(bottle.HTTPResponse):
+        front.spam(db, 1, 1)
+
+
 def test_static_xsl():
     """
     Static XSL page can be rendered.
