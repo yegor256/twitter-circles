@@ -89,6 +89,7 @@ def circle(db, number):
             WHERE circle = ? AND spam.id IS NULL
             GROUP BY rank.id
             ORDER BY value DESC
+            LIMIT 100
             """,
             (number,)
         ).fetchall(),
