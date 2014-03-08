@@ -147,3 +147,6 @@ class TestWeb(unittest.TestCase):
         """
         assert self.app.get('/xsl/layout.xsl').status == '200 OK'
 
+
+if __name__ == '__main__':
+    unittest.main()
