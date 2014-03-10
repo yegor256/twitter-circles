@@ -79,13 +79,13 @@ class TestMethods(unittest.TestCase):
         """
         Index can render data from Sqlite DB.
         """
-        front.index(self.db)
+        assert front.index(self.db).has_key('circles')
 
     def test_circle(self):
         """
         Circle page can render data from Sqlite DB.
         """
-        front.circle(self.db, self.fix_circle)
+        assert front.circle(self.db, self.fix_circle).has_key('ranks')
 
     def test_delete(self):
         """

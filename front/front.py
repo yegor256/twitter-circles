@@ -43,6 +43,19 @@ import argparse
 app = bottle.Bottle()
 
 
+def auth(user, passwd):
+    """
+    Validate user and password.
+    :param user: User name
+    :param passwd: Password
+    :return: TRUE if authenticated
+    """
+    if user == 'curiost' and passwd == '12345':
+        return True
+    return False
+
+
+#@bottle.auth_basic(auth)
 @app.get('/', apply=[bottle.view('tpl/index.xml.tpl')])
 def index(db):
     """
@@ -64,6 +77,7 @@ def index(db):
     )
 
 
+#@bottle.auth_basic(auth)
 @app.get('/circle/<number:int>', apply=[bottle.view('tpl/circle.xml.tpl')])
 def circle(db, number):
     """
@@ -97,6 +111,7 @@ def circle(db, number):
     )
 
 
+#@bottle.auth_basic(auth)
 @app.get('/delete/<number:int>')
 def delete(db, number):
     """
@@ -114,6 +129,7 @@ def delete(db, number):
     bottle.redirect("/")
 
 
+#@bottle.auth_basic(auth)
 @app.get('/spam/<crc:int>/<number:int>')
 def spam(db, crc, number):
     """
