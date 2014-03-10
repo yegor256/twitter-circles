@@ -21,15 +21,8 @@ daemonize -a -v -l ${DIR}/front.pid -p ${DIR}/front.pid -c ${DIR}/front \
     -o ${DIR}/stdout.log -e ${DIR}/stderr.log \
     $(which python) front.py ${DIR}/twitter.db
 
-CITIES=(
-    "52.3740300,4.8896900,30km"
-    "37.4419444,-122.1419444,20mi"
-)
-KEYWORDS=(
-    "github"
-    "dynamodb OR cloudfront OR cloudwatch"
-    "json OR javascript OR xhtml OR html5"
-)
+CITIES=$(cat cities.txt)
+KEYWORDS=$(cat keywords.txt)
 for keyword in "${KEYWORDS[@]}"
 do
     for city in "${CITIES[@]}"
