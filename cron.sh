@@ -21,7 +21,7 @@ daemonize -a -v -l ${DIR}/front.pid -p ${DIR}/front.pid -c ${DIR}/front \
     -o ${DIR}/stdout.log -e ${DIR}/stderr.log \
     $(which python) front.py ${DIR}/twitter.db
 
-whie read city; do
+while read city; do
     while keyword; do
         java -jar ${DIR}/target/circles.jar "--city=${city}" \
             "--tag=${keyword}" "--jdbc=jdbc:sqlite:${DB}" "--key=${OAUTH}"
