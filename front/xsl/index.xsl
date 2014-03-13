@@ -9,6 +9,10 @@
         <h1>
             <xsl:text>Circles</xsl:text>
         </h1>
+        <p>
+            <xsl:text>Latest tweet on </xsl:text>
+            <xsl:value-of select="latest"/>
+        </p>
         <xsl:apply-templates select="circles/circle" />
     </xsl:template>
     <xsl:template match="circles/circle">

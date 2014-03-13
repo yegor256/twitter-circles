@@ -73,7 +73,12 @@ def index(db):
             GROUP BY c.id
             ORDER BY t.date
             """
-        ).fetchall()
+        ).fetchall(),
+        latest=db.execute(
+            """
+            SELECT date FROM tweet ORDER BY date DESC LIMIT 1
+            """
+        ).fetchone()[0]
     )
 
 
